@@ -174,33 +174,11 @@ echo "**** Successfully built kernel ****"
 
 mkimg="${MTK_ROOT_BUILD}/tools/mkimage"
 if [ "${KBUILD_OUTPUT_SUPPORT}" == "yes" ]; then
-  if [ "${TARGET_ARCH}" == "arm64" ]; then
-    kernel_img="${outdir}/arch/arm64/boot/Image"
-    if [ "${MTK_APPENDED_DTB_SUPPORT}" == "yes" ]; then
-      kernel_zimg="${outdir}/arch/arm64/boot/Image.gz-dtb"
-    else
-      kernel_zimg="${outdir}/arch/arm64/boot/Image.gz"
-  else
-    kernel_img="${outdir}/arch/arm/boot/Image"
-    if [ "${MTK_APPENDED_DTB_SUPPORT}" == "yes" ]; then
-      kernel_zimg="${outdir}/arch/arm/boot/zImage-dtb"
-    else
-      kernel_zimg="${outdir}/arch/arm/boot/zImage"
-  fi
+  kernel_img="${outdir}/arch/arm/boot/Image"
+  kernel_zimg="${outdir}/arch/arm/boot/zImage"
 else
-  if [ "${TARGET_ARCH}" == "arm64" ]; then
-    kernel_img="${curdir}/arch/arm64/boot/Image"
-    if [ "${MTK_APPENDED_DTB_SUPPORT}" == "yes" ]; then
-      kernel_zimg="${curdir}/arch/arm64/boot/Image.gz-dtb"
-    else
-      kernel_zimg="${curdir}/arch/arm64/boot/Image.gz"
-  else
-    kernel_img="${curdir}/arch/arm/boot/Image"
-    if [ "${MTK_APPENDED_DTB_SUPPORT}" == "yes" ]; then
-      kernel_zimg="${curdir}/arch/arm/boot/zImage-dtb"
-    else
-      kernel_zimg="${curdir}/arch/arm/boot/zImage"
-  fi
+kernel_img="${curdir}/arch/arm/boot/Image"
+kernel_zimg="${curdir}/arch/arm/boot/zImage"
 fi
 
 echo "**** Generate download images ****"
