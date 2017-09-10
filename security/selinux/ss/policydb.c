@@ -148,6 +148,16 @@ static struct policydb_compat_info policydb_compat[] = {
 		.sym_num	= SYM_NUM,
 		.ocon_num	= OCON_NUM,
 	},
+	{
+		.version	= POLICYDB_VERSION_CONSTRAINT_NAMES,
+		.sym_num	= SYM_NUM,
+		.ocon_num	= OCON_NUM,
+	},
+	{
+		.version	= POLICYDB_VERSION_XPERMS_IOCTL,
+		.sym_num	= SYM_NUM,
+		.ocon_num	= OCON_NUM,
+	},
 };
 
 static struct policydb_compat_info *policydb_lookup_compat(int version)
@@ -616,6 +626,19 @@ static int common_destroy(void *key, void *datum, void *p)
 	}
 	kfree(datum);
 	return 0;
+}
+
+static void constraint_expr_destroy(struct constraint_expr *expr)
+{
+	if (expr) {
+		ebitmap_destroy(&expr->names);
+		if (expr->type_names) {
+			ebitmap_destroy(&expr->type_names->types);
+			ebitmap_destroy(&expr->type_names->negset);
+			kfree(expr->type_names);
+		}
+		kfree(expr);
+	}
 }
 
 static void constraint_expr_destroy(struct constraint_expr *expr)
@@ -3129,6 +3152,18 @@ static int ocontext_write(struct policydb *p, struct policydb_compat_info *info,
 				rc = context_write(p, &c->context[0], fp);
 				if (rc)
 					return rc;
+				if (p->policyvers >=
+					POLICYDB_VERSION_CONSTRAINT_NAMES) {
+						e->type_names = kzalloc(sizeof
+						(*e->type_names),
+						GFP_KERNEL);
+					if (!e->type_names)
+						return -ENOMEM;
+					type_set_init(e->type_names);
+					rc = type_set_read(e->type_names, fp);
+					if (rc)
+						return rc;
+				}
 				break;
 			case OCON_FS:
 			case OCON_NETIF:
@@ -3193,6 +3228,12 @@ static int ocontext_write(struct policydb *p, struct policydb_compat_info *info,
 				rc = context_write(p, &c->context[0], fp);
 				if (rc)
 					return rc;
+				if (p->policyvers >=
+					POLICYDB_VERSION_CONSTRAINT_NAMES) {
+					rc = type_set_write(e->type_names, fp);
+					if (rc)
+						return rc;
+				}
 				break;
 			}
 		}
