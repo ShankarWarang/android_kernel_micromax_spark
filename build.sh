@@ -1,4 +1,27 @@
 #!/bin/bash
+# Inits
+KERNEL_DIR=$PWD
+ZIMAGE=$KERNEL_DIR/arch/arm/boot/zImage
+
+# Exports
+export ARCH=arm
+export SUBARCH=arm
+export KBUILD_BUILD_USER="ShankarWarang"
+export KBUILD_BUILD_HOST="HighwayUltimatrix"
+
+# Colors
+Black='\e[0;30m'        # Black
+Red='\e[0;31m'          # Red
+Green='\e[0;32m'        # Green
+Yellow='\e[0;33m'       # Yellow
+Blue='\e[0;34m'         # Blue
+Purple='\e[0;35m'       # Purple
+Cyan='\e[0;36m'         # Cyan
+White='\e[0;37m'        # White
+nocol='\033[0m'         # Default
+
+make q380_defconfig
+
 # Default settings
 verfile="android.ver"
 curcfg=".config"
