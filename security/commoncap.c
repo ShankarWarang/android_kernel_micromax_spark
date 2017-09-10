@@ -767,6 +767,8 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
 		return -EINVAL;
 	}
 
+	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
+	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
 	return 0;
 }
 
